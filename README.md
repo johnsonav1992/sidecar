@@ -1,4 +1,4 @@
-# Youtube Analytics
+# Sidecar
 
 A minimal Remix application starter with a home page.
 

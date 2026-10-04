@@ -4,7 +4,7 @@ import { onlyArrowFunctions } from './rules/only-arrow-functions.ts';
 import { paddingAroundMultilineBlocks } from './rules/padding-around-multiline-blocks.ts';
 
 export default {
-  meta: { name: 'youtube-analytics' },
+  meta: { name: 'sidecar' },
   rules: {
     'blank-line-before-return': blankLineBeforeReturn,
     'no-blank-lines-between-jsx-elements': noBlankLinesBetweenJSXElements,

@@ -1,4 +1,4 @@
-# Youtube Analytics Agent Guide
+# Sidecar Agent Guide
 
 This app was scaffolded with `remix new`. Use these conventions when continuing to build it out.
 
@@ -18,6 +18,7 @@ Use `npm run hmr` for live server and browser updates; `npm run dev` only watche
 ## Building Features
 
 Refer to ./.agents/skills/remix/SKILL.md for the Remix mental model and how to find guides and API READMEs through `node_modules/remix/INDEX.md`.
+Refer to ./.agents/skills/app/SKILL.md for specific design/arch./code-style decisions from the app maintainer you must follow
 
 ## Starter Layout
 

@@ -3,6 +3,8 @@ import { css } from 'remix/component';
 import { ImportMap } from 'remix/component/server';
 
 import { scriptEntry } from '../assets.ts';
+import { theme } from '../theme/theme.ts';
+import { AppLayout } from '../ui/app-layout.tsx';
 
 export interface DocumentProps {
   children?: RemixNode;
@@ -10,11 +12,7 @@ export interface DocumentProps {
   title?: string;
 }
 
-const readAppDisplayName = (value: string): string => {
-  return value.startsWith('%%') ? 'Remix App' : decodeURIComponent(value);
-};
-
-const DEFAULT_TITLE = readAppDisplayName('Youtube%20Analytics');
+const DEFAULT_TITLE = 'Sidecar';
 
 export const Document = (handle: Handle<DocumentProps>) => {
   return () => {
@@ -31,7 +29,20 @@ export const Document = (handle: Handle<DocumentProps>) => {
           />
           <meta
             name='color-scheme'
-            content='light dark'
+            content='dark'
+          />
+          <link
+            rel='preconnect'
+            href='https://fonts.googleapis.com'
+          />
+          <link
+            rel='preconnect'
+            href='https://fonts.gstatic.com'
+            crossOrigin='anonymous'
+          />
+          <link
+            rel='stylesheet'
+            href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'
           />
           <link
             rel='icon'
@@ -53,7 +64,17 @@ export const Document = (handle: Handle<DocumentProps>) => {
             src={href}
           ></script>
         </head>
-        <body mix={css({ margin: 0 })}>{children}</body>
+        <body
+          mix={css({
+            margin: 0,
+            minHeight: '100vh',
+            background: theme.color.background,
+            color: theme.color.text,
+            fontFamily: theme.font.family
+          })}
+        >
+          <AppLayout>{children}</AppLayout>
+        </body>
       </html>
     );
   };

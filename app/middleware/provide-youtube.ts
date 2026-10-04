@@ -15,7 +15,7 @@ if (process.env.GOOGLE_REFRESH_TOKEN) {
   oauthClient.setCredentials({ refresh_token: process.env.GOOGLE_REFRESH_TOKEN });
 }
 
-type YoutubeMiddleware = Middleware<{
+type YoutubeMiddlewareFn = Middleware<{
   key: typeof YouTubeApi;
   value: YouTubeApi;
   property: 'youtube';
@@ -25,7 +25,7 @@ type YoutubeMiddleware = Middleware<{
  * Adds the authenticated YouTube API wrapper to every request context.
  * Configure the Google OAuth environment variables before calling YouTube methods.
  */
-export const provideYoutube: YoutubeMiddleware = (context, next) => {
+export const provideYoutube: YoutubeMiddlewareFn = (context, next) => {
   context.set(YouTubeApi, new YouTubeApi(oauthClient), { property: 'youtube' });
 
   return next();

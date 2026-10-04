@@ -6,10 +6,10 @@ export default defineConfig({
     {
       files: ['app/**/*.{js,jsx,ts,tsx}', 'server.ts'],
       rules: {
-        'youtube-analytics/padding-around-multiline-blocks': 'error',
-        'youtube-analytics/only-arrow-functions': 'error',
-        'youtube-analytics/blank-line-before-return': 'error',
-        'youtube-analytics/no-blank-lines-between-jsx-elements': 'error'
+        'sidecar/padding-around-multiline-blocks': 'error',
+        'sidecar/only-arrow-functions': 'error',
+        'sidecar/blank-line-before-return': 'error',
+        'sidecar/no-blank-lines-between-jsx-elements': 'error'
       }
     }
   ]

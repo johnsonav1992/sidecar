@@ -1,5 +1,5 @@
 {
-  "name": "youtube-analytics",
+  "name": "sidecar",
   "private": true,
   "type": "module",
   "scripts": {
