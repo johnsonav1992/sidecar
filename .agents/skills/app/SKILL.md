@@ -9,4 +9,5 @@ description: Use this to make sure you are writing code according to the specs t
 - do all css sizing in rem unless px or another thing is critical
 - No comments unless doing library-style jsdoc comments and even then, only if it's a util or something that really needs them
 - No barrel index files ANYWHERE
+- Component props should alwasy live in an extracted type above the component FN and passed to Handle<>
 

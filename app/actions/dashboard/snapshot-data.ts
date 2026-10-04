@@ -52,6 +52,7 @@ export const loadSnapshot = async (
       (result.columnHeaders ?? []).map((column, index) => [column.name, Number(row?.[index] ?? 0)])
     );
   };
+
   const metrics = 'views,estimatedMinutesWatched,subscribersGained,subscribersLost';
   const [current, previous, revenue, previousRevenue] = await Promise.all([
     totals(dates.start, dates.end, metrics),

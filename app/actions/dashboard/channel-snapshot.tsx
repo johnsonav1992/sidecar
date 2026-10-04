@@ -1,12 +1,9 @@
 import type { Handle } from 'remix/component';
 
 import { FrameLoader } from '../../ui/public/frame-loader.tsx';
-import type { SnapshotRange, SnapshotData } from './snapshot-data.ts';
-import { SnapshotCard } from './snapshot-card.tsx';
+import { SnapshotCard, type SnapshotCardProps } from './snapshot-card.tsx';
 
-export const ChannelSnapshot = (
-  handle: Handle<{ range: SnapshotRange; data?: SnapshotData; loading?: boolean; error?: boolean }>
-) => {
+export const ChannelSnapshot = (handle: Handle<SnapshotCardProps>) => {
   return () =>
     handle.props.loading ? (
       <SnapshotCard
@@ -14,15 +11,23 @@ export const ChannelSnapshot = (
         loading
       />
     ) : (
-      <FrameLoader
-        fallback={
+      <div
+        data-snapshot-frame
+        aria-busy='false'
+      >
+        <FrameLoader />
+        <div data-snapshot-slot='content'>
+          <SnapshotCard {...handle.props} />
+        </div>
+        <div
+          data-snapshot-slot='fallback'
+          hidden={true}
+        >
           <SnapshotCard
             range={handle.props.range}
             loading
           />
-        }
-      >
-        <SnapshotCard {...handle.props} />
-      </FrameLoader>
+        </div>
+      </div>
     );
 };

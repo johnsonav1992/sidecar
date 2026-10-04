@@ -5,11 +5,14 @@ import { theme } from '../../theme/theme.ts';
 import { Skeleton } from '../../ui/skeleton.tsx';
 import type { SnapshotMetric } from './snapshot-data.ts';
 
-export const SnapshotMetricTile = (
-  handle: Handle<{ metric?: SnapshotMetric; loading?: boolean }>
-) => {
+type SnapshotMetricTileProps = {
+  metric?: SnapshotMetric;
+  loading?: boolean;
+};
+
+export const SnapshotMetricTile = (handle: Handle<SnapshotMetricTileProps>) => {
   return () => {
-    const { metric } = handle.props;
+    const { metric, loading } = handle.props;
     const format = (value: number | null): string => {
       return value == null
         ? '—'
@@ -27,6 +30,7 @@ export const SnapshotMetricTile = (
             Math.abs((change / metric.previous) * 100)
           )
         : null;
+    const trend = change === null || change === 0 ? 'flat' : change > 0 ? 'up' : 'down';
     const comparison =
       change === null
         ? 'Unavailable'
@@ -41,23 +45,29 @@ export const SnapshotMetricTile = (
         mix={css({
           minWidth: 0,
           display: 'grid',
-          gap: theme.space.md,
-          padding: `${theme.space.sm} 0`,
-          alignContent: 'start'
+          gap: theme.space.sm,
+          alignContent: 'start',
+          padding: theme.space.md,
+          borderRadius: theme.radius.md,
+          background: theme.color.surfaceRaised,
+          border: `${theme.borderWidth.subtle} solid ${theme.color.border}`
         })}
       >
         <div
           mix={css({
             color: theme.color.textMuted,
-            fontSize: theme.font.size.small,
-            minHeight: '1.25rem',
-            lineHeight: '1.25rem'
+            fontSize: theme.font.size.xs,
+            fontWeight: theme.font.weight.medium,
+            letterSpacing: '0.06em',
+            textTransform: 'uppercase',
+            lineHeight: '1rem',
+            minHeight: '1rem'
           })}
         >
-          {handle.props.loading ? (
+          {loading ? (
             <Skeleton
-              width='7rem'
-              height='1.25rem'
+              width='6rem'
+              height='1rem'
             />
           ) : (
             metric?.label
@@ -72,9 +82,9 @@ export const SnapshotMetricTile = (
             fontVariantNumeric: 'tabular-nums'
           })}
         >
-          {handle.props.loading ? (
+          {loading ? (
             <Skeleton
-              width='9rem'
+              width='8rem'
               height='2.75rem'
             />
           ) : (
@@ -82,38 +92,42 @@ export const SnapshotMetricTile = (
           )}
         </div>
         <div mix={css({ display: 'flex', alignItems: 'center', minHeight: '1.75rem' })}>
-          {handle.props.loading ? (
+          {loading ? (
             <Skeleton
-              width='5rem'
+              width='5.5rem'
               height='1.75rem'
             />
           ) : (
             <span
+              data-trend={trend}
               aria-label={
                 percentage
                   ? `${percentage}% ${change! > 0 ? 'increase' : 'decrease'} compared with the previous period`
                   : comparison
               }
               mix={css({
-                borderRadius: theme.radius.sm,
+                display: 'inline-flex',
+                alignItems: 'center',
+                width: 'fit-content',
+                borderRadius: theme.radius.pill,
                 padding: `${theme.space.xs} ${theme.space.sm}`,
                 fontSize: theme.font.size.small,
-                fontWeight: theme.font.weight.medium
+                fontWeight: theme.font.weight.semibold,
+                lineHeight: '1.25rem',
+                fontVariantNumeric: 'tabular-nums',
+                '&[data-trend="flat"]': {
+                  color: theme.color.textMuted,
+                  background: theme.color.background
+                },
+                '&[data-trend="up"]': {
+                  color: theme.color.success,
+                  background: theme.color.successBackground
+                },
+                '&[data-trend="down"]': {
+                  color: theme.color.danger,
+                  background: theme.color.dangerBackground
+                }
               })}
-              style={{
-                color:
-                  change === null || change === 0
-                    ? theme.color.textMuted
-                    : change > 0
-                      ? theme.color.success
-                      : theme.color.danger,
-                background:
-                  change === null || change === 0
-                    ? theme.color.surfaceRaised
-                    : change > 0
-                      ? theme.color.successBackground
-                      : theme.color.dangerBackground
-              }}
             >
               {comparison}
             </span>
@@ -127,13 +141,13 @@ export const SnapshotMetricTile = (
             minHeight: '1.25rem'
           })}
         >
-          {handle.props.loading ? (
+          {loading ? (
             <Skeleton
-              width='8rem'
+              width='9rem'
               height='1.25rem'
             />
           ) : metric?.previous == null ? (
-            'Revenue unavailable'
+            'Unavailable'
           ) : (
             `${format(metric.previous)} previous period`
           )}

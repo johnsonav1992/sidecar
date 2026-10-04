@@ -7,9 +7,14 @@ import { Skeleton } from '../../ui/skeleton.tsx';
 import { snapshotRanges, type SnapshotRange, type SnapshotData } from './snapshot-data.ts';
 import { SnapshotMetricTile } from './snapshot-metric.tsx';
 
-export const SnapshotCard = (
-  handle: Handle<{ range: SnapshotRange; data?: SnapshotData; loading?: boolean; error?: boolean }>
-) => {
+export type SnapshotCardProps = {
+  range: SnapshotRange;
+  data?: SnapshotData;
+  loading?: boolean;
+  error?: boolean;
+};
+
+export const SnapshotCard = (handle: Handle<SnapshotCardProps>) => {
   return () => {
     const { range, data, loading, error } = handle.props;
     const dates = data
@@ -36,7 +41,7 @@ export const SnapshotCard = (
           mix={css({
             display: 'flex',
             justifyContent: 'space-between',
-            alignItems: 'center',
+            alignItems: 'flex-end',
             flexWrap: 'wrap',
             gap: theme.space.md
           })}
@@ -47,6 +52,7 @@ export const SnapshotCard = (
                 margin: 0,
                 fontSize: theme.font.size.heading,
                 fontWeight: theme.font.weight.semibold,
+                letterSpacing: '-0.02em',
                 lineHeight: '1.5rem'
               })}
             >
@@ -63,11 +69,13 @@ export const SnapshotCard = (
             >
               {loading ? (
                 <Skeleton
-                  width='12rem'
+                  width='14rem'
                   height='1.25rem'
                 />
+              ) : dates ? (
+                `${dates} · compared with the previous ${range} days`
               ) : (
-                (dates ?? 'Your channel at a glance')
+                'Your channel at a glance'
               )}
             </div>
           </div>
@@ -76,9 +84,10 @@ export const SnapshotCard = (
             mix={css({
               display: 'flex',
               gap: theme.space.xs,
-              background: theme.color.background,
               padding: theme.space.xs,
-              borderRadius: theme.radius.md
+              borderRadius: theme.radius.md,
+              background: theme.color.background,
+              border: `${theme.borderWidth.subtle} solid ${theme.color.border}`
             })}
           >
             {snapshotRanges.map((option) => (
@@ -95,11 +104,14 @@ export const SnapshotCard = (
                   borderRadius: theme.radius.sm,
                   fontSize: theme.font.size.small,
                   fontWeight: theme.font.weight.medium,
+                  lineHeight: '1.25rem',
                   whiteSpace: 'nowrap',
                   color: theme.color.textMuted,
                   '&[aria-current="true"]': {
-                    background: theme.color.surfaceHover,
-                    color: theme.color.text
+                    background: theme.color.surfaceRaised,
+                    color: theme.color.text,
+                    fontWeight: theme.font.weight.semibold,
+                    boxShadow: `inset 0 0 0 ${theme.borderWidth.subtle} ${theme.color.border}`
                   },
                   '&:hover': { color: theme.color.text },
                   '&:focus-visible': {
@@ -116,7 +128,11 @@ export const SnapshotCard = (
         {error ? (
           <p
             role='status'
-            mix={css({ padding: `${theme.space.xl} 0`, color: theme.color.textMuted })}
+            mix={css({
+              margin: 0,
+              padding: `${theme.space.xl} 0 ${theme.space.md}`,
+              color: theme.color.textMuted
+            })}
           >
             Couldn’t load this snapshot. Choose a range to try again.
           </p>
@@ -125,10 +141,8 @@ export const SnapshotCard = (
             mix={css({
               display: 'grid',
               gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
-              gap: theme.space.lg,
-              padding: `${theme.space.lg} 0`,
-              marginTop: theme.space.md,
-              borderTop: `${theme.borderWidth.subtle} solid ${theme.color.border}`,
+              gap: theme.space.md,
+              marginTop: theme.space.lg,
               '@media (max-width: 75rem)': { gridTemplateColumns: 'repeat(2, minmax(0, 1fr))' },
               '@media (max-width: 45rem)': { gridTemplateColumns: 'minmax(0, 1fr)' }
             })}
@@ -150,24 +164,14 @@ export const SnapshotCard = (
         )}
         <footer
           mix={css({
-            display: 'flex',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: theme.space.sm,
-            borderTop: `${theme.borderWidth.subtle} solid ${theme.color.border}`,
-            paddingTop: theme.space.md,
+            marginTop: theme.space.md,
             color: theme.color.textMuted,
             fontSize: theme.font.size.small,
             lineHeight: '1.25rem'
           })}
         >
-          <span>
-            {loading
-              ? 'Updating your snapshot…'
-              : `Changes compared with the previous ${range} days`}
-          </span>
           <span title='Date ranges end yesterday in Pacific time. Recent totals and estimated revenue can change as YouTube finishes processing.'>
-            YouTube reporting may lag · USD
+            {loading ? 'Updating your snapshot…' : 'YouTube reporting may lag · USD'}
           </span>
         </footer>
       </section>
