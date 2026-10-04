@@ -1,0 +1,31 @@
+{
+  "name": "youtube-analytics",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "NODE_ENV=development node --watch --import remix/node-tsx server.ts",
+    "hmr": "NODE_ENV=development node hmr.ts",
+    "start": "NODE_ENV=production node --import remix/node-tsx server.ts",
+    "test": "NODE_ENV=test remix test",
+    "lint": "oxlint",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "check": "npm run format:check && npm run lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.5",
+    "google-auth-library": "^11.1.0",
+    "googleapis": "^183.0.0",
+    "remix": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "oxfmt": "^0.71.0",
+    "oxlint": "^1.86.0",
+    "typescript": "latest"
+  },
+  "engines": {
+    "node": ">=24.3.0"
+  }
+}
