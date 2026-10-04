@@ -9,16 +9,25 @@ export const theme = {
     textMuted: '#aaaaaa',
     accent: '#3ea6ff',
     accentStrong: '#065fd4',
-    success: '#2ba640',
+    success: '#63d688',
+    successBackground: '#182b20',
+    dangerBackground: '#321e20',
     danger: '#f87171',
-    brandVideo: '#ff0033',
+    youtubeRed: '#ff0033',
     avatarChannel: '#356f74',
     avatarAccount: '#6b4a86'
   },
   font: {
     family:
       'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-    size: { xs: '0.625rem', small: '0.8125rem', body: '0.9375rem', title: '1.5rem' },
+    size: {
+      xs: '0.625rem',
+      small: '0.8125rem',
+      body: '0.9375rem',
+      title: '1.5rem',
+      heading: '1.125rem',
+      metric: '2.25rem'
+    },
     weight: { regular: 400, medium: 500, semibold: 600, bold: 700 }
   },
   space: { xs: '0.375rem', sm: '0.625rem', md: '1rem', lg: '1.5rem', xl: '2rem', '2xl': '3rem' },

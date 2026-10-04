@@ -4,9 +4,11 @@ import { ImportMap } from 'remix/component/server';
 
 import { scriptEntry } from '../assets.ts';
 import { theme } from '../theme/theme.ts';
+import type { ChannelInfo } from '../data/channel.ts';
 import { AppLayout } from '../ui/app-layout.tsx';
 
 export interface DocumentProps {
+  channel: ChannelInfo | null;
   children?: RemixNode;
   head?: RemixNode;
   title?: string;
@@ -73,7 +75,7 @@ export const Document = (handle: Handle<DocumentProps>) => {
             fontFamily: theme.font.family
           })}
         >
-          <AppLayout>{children}</AppLayout>
+          <AppLayout channel={handle.props.channel}>{children}</AppLayout>
         </body>
       </html>
     );

@@ -1,11 +1,14 @@
 import type { Handle, RemixNode } from 'remix/component';
 import { css } from 'remix/component';
 
+import type { ChannelInfo } from '../data/channel.ts';
+import { routes } from '../routes.ts';
 import { theme } from '../theme/theme.ts';
 import { DashboardIcon } from './icons/dashboard-icon.tsx';
-import { PlayIcon } from './icons/play-icon.tsx';
+import { SidecarIcon } from './icons/sidecar-icon.tsx';
 
 export interface AppLayoutProps {
+  channel: ChannelInfo | null;
   children?: RemixNode;
 }
 
@@ -33,7 +36,7 @@ export const AppLayout = (handle: Handle<AppLayoutProps>) => {
         })}
       >
         <a
-          href='/'
+          href={routes.dashboard.index.href()}
           aria-label='Sidecar home'
           mix={css({
             display: 'flex',
@@ -46,19 +49,7 @@ export const AppLayout = (handle: Handle<AppLayoutProps>) => {
             fontWeight: theme.font.weight.semibold
           })}
         >
-          <span
-            mix={css({
-              display: 'grid',
-              placeItems: 'center',
-              width: '2rem',
-              height: '1.5rem',
-              borderRadius: theme.radius.sm,
-              background: theme.color.brandVideo,
-              color: theme.color.text
-            })}
-          >
-            <PlayIcon size={14} />
-          </span>
+          <SidecarIcon />
           <span>Sidecar</span>
         </a>
         <div
@@ -66,8 +57,8 @@ export const AppLayout = (handle: Handle<AppLayoutProps>) => {
             display: 'flex',
             alignItems: 'center',
             gap: theme.space.sm,
-            padding: `${theme.space.lg} ${theme.space.sm}`,
-            marginTop: theme.space.lg,
+            padding: `${theme.space.sm} ${theme.space.sm}`,
+            marginTop: theme.space.md,
             borderTop: `${theme.borderWidth.subtle} solid ${theme.color.border}`,
             borderBottom: `${theme.borderWidth.subtle} solid ${theme.color.border}`,
             fontSize: theme.font.size.small
@@ -81,15 +72,38 @@ export const AppLayout = (handle: Handle<AppLayoutProps>) => {
               height: '2.5rem',
               flexShrink: 0,
               borderRadius: theme.radius.pill,
+              overflow: 'hidden',
               background: theme.color.avatarChannel,
               color: theme.color.text,
               fontWeight: theme.font.weight.semibold
             })}
           >
-            D
+            {handle.props.channel?.avatarUrl ? (
+              <img
+                src={handle.props.channel.avatarUrl}
+                alt=''
+                mix={css({
+                  display: 'block',
+                  width: '2.5rem',
+                  height: '2.5rem',
+                  objectFit: 'cover'
+                })}
+              />
+            ) : (
+              (handle.props.channel?.title.charAt(0) ?? '?')
+            )}
           </div>
-          <div>
-            <strong>DFW Tesla</strong>
+          <div mix={css({ minWidth: 0 })}>
+            <strong
+              mix={css({
+                display: 'block',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap'
+              })}
+            >
+              {handle.props.channel?.title ?? 'Channel unavailable'}
+            </strong>
             <span
               mix={css({
                 display: 'block',
@@ -99,7 +113,8 @@ export const AppLayout = (handle: Handle<AppLayoutProps>) => {
                 lineHeight: 1.5
               })}
             >
-              Channel
+              {handle.props.channel?.handle ??
+                (handle.props.channel ? 'Your channel' : 'Try refreshing')}
             </span>
           </div>
         </div>
@@ -108,7 +123,7 @@ export const AppLayout = (handle: Handle<AppLayoutProps>) => {
           mix={css({ display: 'grid', gap: theme.space.xs, marginTop: theme.space.md })}
         >
           <a
-            href='/'
+            href={routes.dashboard.index.href()}
             aria-current='page'
             mix={css({
               display: 'flex',
@@ -138,46 +153,16 @@ export const AppLayout = (handle: Handle<AppLayoutProps>) => {
           SIDECAR
         </div>
       </aside>
-      <div mix={css({ minWidth: 0 })}>
-        <header
-          mix={css({
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            height: '4rem',
-            padding: `0 ${theme.space.xl}`,
-            borderBottom: `${theme.borderWidth.subtle} solid ${theme.color.border}`
-          })}
-        >
-          <span mix={css({ color: theme.color.textMuted, fontSize: theme.font.size.small })}>
-            DFW Tesla
-          </span>
-          <button
-            type='button'
-            aria-label='Account'
-            mix={css({
-              width: '2rem',
-              height: '2rem',
-              border: 0,
-              borderRadius: theme.radius.pill,
-              background: theme.color.avatarAccount,
-              color: theme.color.text,
-              font: 'inherit'
-            })}
-          >
-            A
-          </button>
-        </header>
-        <main
-          mix={css({
-            maxWidth: '70rem',
-            margin: '0 auto',
-            padding: `${theme.space.xl} ${theme.space.xl}`
-          })}
-        >
-          {handle.props.children}
-        </main>
-      </div>
+      <main
+        mix={css({
+          minWidth: 0,
+          width: '100%',
+          boxSizing: 'border-box',
+          padding: theme.space.lg
+        })}
+      >
+        {handle.props.children}
+      </main>
     </div>
   );
 };
