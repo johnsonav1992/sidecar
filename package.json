@@ -15,7 +15,6 @@
   },
   "dependencies": {
     "dotenv": "^18.0.5",
-    "google-auth-library": "^11.1.0",
     "googleapis": "^183.0.0",
     "remix": "^3.0.0"
   },

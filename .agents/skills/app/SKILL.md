@@ -10,4 +10,4 @@ description: Use this to make sure you are writing code according to the specs t
 - No comments unless doing library-style jsdoc comments and even then, only if it's a util or something that really needs them
 - No barrel index files ANYWHERE
 - Component props should alwasy live in an extracted type above the component FN and passed to Handle<>
-
+- Keep standalone icons in their own components under `app/ui/icons/` instead of defining SVG markup inside another component

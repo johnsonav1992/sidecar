@@ -9,7 +9,10 @@ export interface ChannelInfo {
 export class ChannelLoader {
   private pending: Promise<ChannelInfo | null> | undefined;
 
-  constructor(private readonly youtube: Pick<YouTubeApi, 'getChannel'>) {}
+  constructor(
+    private readonly youtube: Pick<YouTubeApi, 'getChannel'>,
+    private readonly channelId: string | null
+  ) {}
 
   get = (): Promise<ChannelInfo | null> => {
     return (this.pending ??= this.load());
@@ -17,7 +20,10 @@ export class ChannelLoader {
 
   private load = async (): Promise<ChannelInfo | null> => {
     try {
-      const response = await this.youtube.getChannel({ part: ['snippet'], mine: true });
+      const response = await this.youtube.getChannel({
+        part: ['snippet'],
+        ...(this.channelId ? { id: [this.channelId] } : { mine: true })
+      });
       const snippet = response.items?.[0]?.snippet;
 
       if (!snippet?.title) return null;

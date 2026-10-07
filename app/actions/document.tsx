@@ -12,6 +12,7 @@ export interface DocumentProps {
   children?: RemixNode;
   head?: RemixNode;
   title?: string;
+  userEmail?: string;
 }
 
 const DEFAULT_TITLE = 'Sidecar';
@@ -75,7 +76,12 @@ export const Document = (handle: Handle<DocumentProps>) => {
             fontFamily: theme.font.family
           })}
         >
-          <AppLayout channel={handle.props.channel}>{children}</AppLayout>
+          <AppLayout
+            channel={handle.props.channel}
+            userEmail={handle.props.userEmail}
+          >
+            {children}
+          </AppLayout>
         </body>
       </html>
     );

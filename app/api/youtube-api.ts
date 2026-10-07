@@ -4,7 +4,6 @@ import {
   type youtubeAnalytics_v2,
   type youtubereporting_v1
 } from 'googleapis';
-import type { OAuth2Client } from 'google-auth-library';
 
 /** Server-side client for YouTube Data, Analytics, and Reporting APIs. */
 export class YouTubeApi {
@@ -12,7 +11,7 @@ export class YouTubeApi {
   private readonly analytics: youtubeAnalytics_v2.Youtubeanalytics;
   private readonly reporting: youtubereporting_v1.Youtubereporting;
 
-  constructor(private readonly auth: OAuth2Client) {
+  constructor(private readonly auth: InstanceType<typeof google.auth.OAuth2>) {
     this.data = google.youtube({ version: 'v3', auth });
     this.analytics = google.youtubeAnalytics({ version: 'v2', auth });
     this.reporting = google.youtubereporting({ version: 'v1', auth });

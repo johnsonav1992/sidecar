@@ -1,4 +1,5 @@
 import type { YouTubeApi, YouTubeDate } from '../../api/youtube-api.ts';
+import { allowedYoutubeChannelId } from '../../auth/google-provider.ts';
 
 export const snapshotRanges = [7, 28, 90] as const;
 export type SnapshotRange = (typeof snapshotRanges)[number];
@@ -38,10 +39,13 @@ export const loadSnapshot = async (
   youtube: YouTubeApi,
   range: SnapshotRange
 ): Promise<SnapshotData> => {
+  const channelId = allowedYoutubeChannelId;
+  if (!channelId) throw new Error('GOOGLE_ALLOWED_CHANNEL_ID is required');
+
   const dates = getSnapshotDates(range);
   const totals = async (startDate: YouTubeDate, endDate: YouTubeDate, metrics: string) => {
     const result = await youtube.queryAnalytics({
-      ids: 'channel==MINE',
+      ids: `channel==${channelId}`,
       startDate,
       endDate,
       metrics

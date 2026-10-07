@@ -1,5 +1,7 @@
 import { createController } from 'remix/router';
+import { Auth, type AuthState } from 'remix/middleware/auth';
 
+import type { SidecarIdentity } from '../../auth/require-google-auth.ts';
 import { routes } from '../../routes.ts';
 import { Document } from '../document.tsx';
 import { DashboardPage } from './page.tsx';
@@ -10,11 +12,13 @@ export default createController(routes.dashboard, {
   actions: {
     index: async (context) => {
       const channel = await context.channel.get();
+      const auth = context.get(Auth) as AuthState<SidecarIdentity> | undefined;
 
       return context.render(
         <Document
           title='Dashboard · Sidecar'
           channel={channel}
+          userEmail={auth?.ok ? auth.identity.email : undefined}
         >
           <DashboardPage range={parseSnapshotRange(context.url.searchParams.get('range'))} />
         </Document>

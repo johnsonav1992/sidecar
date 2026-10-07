@@ -1,19 +1,15 @@
-import 'dotenv/config';
-
-import { OAuth2Client } from 'google-auth-library';
+import { google } from 'googleapis';
+import { refreshExternalAuth } from 'remix/auth';
+import { Auth, type AuthState } from 'remix/middleware/auth';
 import type { Middleware } from 'remix/router';
+import { createRedirectResponse } from 'remix/response/redirect';
+import { Session } from 'remix/session';
 
-import { YOUTUBE_OAUTH_SCOPES, YouTubeApi } from '../api/youtube-api.ts';
-
-const oauthClient = new OAuth2Client(
-  process.env.GOOGLE_CLIENT_ID,
-  process.env.GOOGLE_CLIENT_SECRET,
-  process.env.GOOGLE_REDIRECT_URI
-);
-
-if (process.env.GOOGLE_REFRESH_TOKEN) {
-  oauthClient.setCredentials({ refresh_token: process.env.GOOGLE_REFRESH_TOKEN });
-}
+import { googleProvider } from '../auth/google-provider.ts';
+import type { SidecarIdentity } from '../auth/require-google-auth.ts';
+import { sqliteTokenStore } from '../data/sqlite-token-store.ts';
+import { routes } from '../routes.ts';
+import { YouTubeApi } from '../api/youtube-api.ts';
 
 type YoutubeMiddlewareFn = Middleware<{
   key: typeof YouTubeApi;
@@ -21,29 +17,45 @@ type YoutubeMiddlewareFn = Middleware<{
   property: 'youtube';
 }>;
 
-/**
- * Adds the authenticated YouTube API wrapper to every request context.
- * Configure the Google OAuth environment variables before calling YouTube methods.
- */
-export const provideYoutube: YoutubeMiddlewareFn = (context, next) => {
-  context.set(YouTubeApi, new YouTubeApi(oauthClient), { property: 'youtube' });
+export const provideYoutube: YoutubeMiddlewareFn = async (context, next) => {
+  const auth = context.get(Auth) as AuthState<SidecarIdentity> | undefined;
+
+  if (!auth?.ok) {
+    context.set(YouTubeApi, new YouTubeApi(new google.auth.OAuth2()), { property: 'youtube' });
+
+    return next();
+  }
+
+  const session = context.get(Session);
+
+  const storedAuth = await sqliteTokenStore.get(auth.identity.email);
+
+  if (!storedAuth) {
+    session?.unset('auth');
+
+    return createRedirectResponse(routes.login.href());
+  }
+
+  try {
+    let tokens = storedAuth.tokens;
+
+    if (tokens.expiresAt && tokens.expiresAt.getTime() <= Date.now()) {
+      try {
+        tokens = (await refreshExternalAuth(googleProvider, tokens)).tokens;
+      } catch {
+        return createRedirectResponse(`${routes.login.href()}?error=reauthorize`);
+      }
+
+      if (!tokens.refreshToken) tokens.refreshToken = storedAuth.tokens.refreshToken;
+      await sqliteTokenStore.save({ ...storedAuth, tokens });
+    }
+
+    const client = new google.auth.OAuth2();
+    client.setCredentials({ access_token: tokens.accessToken });
+    context.set(YouTubeApi, new YouTubeApi(client), { property: 'youtube' });
+  } catch {
+    return new Response('Unable to prepare YouTube access. Please try again.', { status: 503 });
+  }
 
   return next();
-};
-
-/** Build the consent URL for a one-time refresh-token setup or a future login flow. */
-export const getYouTubeAuthorizationUrl = (state = 'youtube-auth') => {
-  return oauthClient.generateAuthUrl({
-    access_type: 'offline',
-    prompt: 'consent',
-    scope: Object.values(YOUTUBE_OAUTH_SCOPES),
-    state
-  });
-};
-
-/** Exchange the authorization code from Google's OAuth redirect for tokens. */
-export const exchangeYouTubeAuthorizationCode = async (code: string) => {
-  const { tokens } = await oauthClient.getToken(code);
-
-  return tokens;
 };

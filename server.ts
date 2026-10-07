@@ -1,3 +1,5 @@
+import 'dotenv/config';
+
 import * as http from 'node:http';
 import { createRequestListener } from 'remix/node-fetch-server';
 
